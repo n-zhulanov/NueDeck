@@ -334,7 +334,7 @@ namespace AssetStoreTools.Uploader
 
                 // Wait until the texture is no longer loading
                 // IMPORTANT: AssetPreview.IsLoadingPreview currently never returns true in 2020.3 and 2021.3 (Issue 1323729)
-                while (AssetPreview.IsLoadingAssetPreview(kvp.Value.GetInstanceID()))
+                while (IsLoadingAssetPreview(kvp.Value))
                 {
                     // 2019.4: AssetPreview.IsLoadingAssetPreview value only changes after invoking the getter method
                     if (AssetPreview.GetAssetPreview(kvp.Value))
@@ -347,6 +347,15 @@ namespace AssetStoreTools.Uploader
                 if (tex != null)
                     File.WriteAllBytes(kvp.Key + "/preview.png", tex.EncodeToPNG());
             }
+        }
+
+        private static bool IsLoadingAssetPreview(UnityEngine.Object asset)
+        {
+#if UNITY_6000_5_OR_NEWER
+            return AssetPreview.IsLoadingAssetPreview(asset.GetEntityId());
+#else
+            return AssetPreview.IsLoadingAssetPreview(asset.GetInstanceID());
+#endif
         }
 
         private static void CreateUnityPackage(string pathToArchive, string outputPath)

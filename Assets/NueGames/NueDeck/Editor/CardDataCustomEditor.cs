@@ -11,9 +11,17 @@ namespace NueGames.NueDeck.Editor
         
 
         [OnOpenAsset]
+#if UNITY_6000_3_OR_NEWER
+        public static bool OpenEditor(EntityId instanceId, int line)
+#else
         public static bool OpenEditor(int instanceId, int line)
+#endif
         {
+#if UNITY_6000_3_OR_NEWER
+            CardData obj = EditorUtility.EntityIdToObject(instanceId) as CardData;
+#else
             CardData obj = EditorUtility.InstanceIDToObject(instanceId) as CardData;
+#endif
             if (obj != null)
             {
                 CardEditorWindow.OpenCardEditor(obj);
